@@ -224,13 +224,15 @@
     // Event listener for key presses
     document.addEventListener('keydown', function(event) {
         var currentAudio = getCurrentAudio();
-        if (currentAudio) {
+        if (currentAudio || event.keyCode === 32) {
+            // Prevent default action for spacebar in all cases
+            event.preventDefault();
+
             if (event.keyCode === 37) { // Left arrow key
                 currentAudio.currentTime = Math.max(0, currentAudio.currentTime - 10);
             } else if (event.keyCode === 39) { // Right arrow key
                 currentAudio.currentTime = Math.min(currentAudio.duration, currentAudio.currentTime + 10);
             } else if (event.keyCode === 32) { // Spacebar
-                event.preventDefault(); // Prevent the default action of the spacebar (scrolling)
                 if (currentAudio.paused) {
                     currentAudio.play();
                 } else {
@@ -240,6 +242,7 @@
         }
     });
 </script>
+
 
 
 </body>
