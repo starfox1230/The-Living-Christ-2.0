@@ -201,6 +201,8 @@
 <br><br>
 
 <script>
+    var lastPlayedAudio = null; // Global variable to keep track of the last played audio
+
     function toggleSection(sectionId) {
         var section = document.getElementById(sectionId);
         if (section.classList.contains('hidden')) {
@@ -210,37 +212,39 @@
         }
     }
 
-    // Function to find the current active audio element
-    function getCurrentAudio() {
-        var audios = document.getElementsByTagName('audio');
-        for (var i = 0; i < audios.length; i++) {
-            if (!audios[i].paused) {
-                return audios[i];
-            }
-        }
-        return null; // No audio is playing
+    // Function to set the last played audio element
+    function setLastPlayedAudio(audio) {
+        lastPlayedAudio = audio;
     }
 
     // Event listener for key presses
     document.addEventListener('keydown', function(event) {
-        var currentAudio = getCurrentAudio();
-        if (currentAudio || event.keyCode === 32) {
-            // Prevent default action for spacebar in all cases
-            event.preventDefault();
+        if (event.keyCode === 37 || event.keyCode === 39 || event.keyCode === 32) {
+            // Check if there is a last interacted audio element
+            if (lastPlayedAudio) {
+                event.preventDefault(); // Prevent the default action for these keys
 
-            if (event.keyCode === 37) { // Left arrow key
-                currentAudio.currentTime = Math.max(0, currentAudio.currentTime - 10);
-            } else if (event.keyCode === 39) { // Right arrow key
-                currentAudio.currentTime = Math.min(currentAudio.duration, currentAudio.currentTime + 10);
-            } else if (event.keyCode === 32) { // Spacebar
-                if (currentAudio.paused) {
-                    currentAudio.play();
-                } else {
-                    currentAudio.pause();
+                if (event.keyCode === 37) { // Left arrow key
+                    lastPlayedAudio.currentTime = Math.max(0, lastPlayedAudio.currentTime - 10);
+                } else if (event.keyCode === 39) { // Right arrow key
+                    lastPlayedAudio.currentTime = Math.min(lastPlayedAudio.duration, lastPlayedAudio.currentTime + 10);
+                } else if (event.keyCode === 32) { // Spacebar
+                    if (lastPlayedAudio.paused) {
+                        lastPlayedAudio.play();
+                    } else {
+                        lastPlayedAudio.pause();
+                    }
                 }
             }
         }
     });
+
+    // Attach event listeners to all audio elements
+    var audios = document.getElementsByTagName('audio');
+    for (var i = 0; i < audios.length; i++) {
+        audios[i].addEventListener('play', function() { setLastPlayedAudio(this); });
+        audios[i].addEventListener('pause', function() { setLastPlayedAudio(this); });
+    }
 </script>
 
 
